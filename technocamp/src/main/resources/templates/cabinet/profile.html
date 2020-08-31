@@ -1,0 +1,190 @@
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Cabinet</title>
+
+    <!--bootstrap 4.1.1-->
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <!--bootstrap 3.3.7-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <!--ajax-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+<div class="container bootstrap snippet">
+    <div class="row">
+        <div class="col-sm-10"><h4 th:if="${signedUser != null}"
+                                   th:text="${signedUser.name + ' ' + signedUser.surname}"></h4></div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3" th:replace="cabinet/header :: header">
+
+        </div>
+        <div class="col-sm-9">
+            <div th:replace="cabinet/sidebar :: sidebar">
+
+            </div>
+            <div class="tab-content">
+                <!--profile-->
+                <div>
+                    <form class="form" th:action="@{/cabinet/profile}" method="POST" id="change-profile"
+                          onsubmit="return false;">
+                        <div class="form-group">
+
+                            <div class="col-xs-6">
+                                <label><h4>First name</h4></label>
+                                <input type="text"
+                                       id="name"
+                                       class="form-control"
+                                       name="name"
+                                       placeholder="first name"
+                                       th:value="${signedUser.name}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+
+                            <div class="col-xs-6">
+                                <label><h4>Last name</h4></label>
+                                <input type="text"
+                                       id="surname"
+                                       class="form-control"
+                                       name="surname"
+                                       placeholder="last name"
+                                       th:value="${signedUser.surname}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+
+                            <div class="col-xs-6">
+                                <label><h4>Phone</h4></label>
+                                <input type="text"
+                                       id="phone"
+                                       class="form-control"
+                                       name="phone"
+                                       placeholder="enter phone"
+                                       th:value="${signedUser.phone}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+
+                            <div class="col-xs-6">
+                                <label><h4>Username</h4></label>
+                                <input type="text"
+                                       id="username"
+                                       class="form-control"
+                                       name="username"
+                                       placeholder="username"
+                                       th:value="${signedUser.username}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+
+                            <div class="col-xs-6">
+                                <label><h4>Country</h4></label>
+                                <select class="form-control" style="height: 35px"
+                                        name="country"
+                                        id="country">
+                                    <option th:each="country : ${countryList}"
+                                            th:value="${country.id}"
+                                            th:if="${country.id == signedUser.country}"
+                                            th:selected="selected"
+                                            th:text="${country.name}"
+                                    ></option>
+                                    <option th:each="country : ${countryList}"
+                                            th:value="${country.id}"
+                                            th:if="${country.id != signedUser.country}"
+                                            th:text="${country.name}">
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+
+                            <div class="col-xs-6">
+                                <label><h4>City</h4></label>
+                                <input type="text"
+                                       id="city"
+                                       class="form-control"
+                                       name="city"
+                                       placeholder="somewhere"
+                                       th:value="${signedUser.city}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+
+                            <div class="col-xs-12">
+                                <br>
+                                <!--X-CSRF-TOKEN-->
+                                <input type="hidden"
+                                       name="_csrf"
+                                       value="${_csrf.token}"/>
+                                <!--X-CSRF-TOKEN-->
+
+                                <input type="hidden" id="id" name="id" th:value="${signedUser.id}">
+
+                                <button class="btn btn-lg btn-success" type="submit"><i
+                                        class="glyphicon glyphicon-ok-sign"></i> Save
+                                </button>
+                                <button id="reset" class="btn btn-lg" type="button"><i
+                                        class="glyphicon glyphicon-repeat"></i> Reset
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <hr>
+                </div>
+                <!--profile-->
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+<script>
+    $(document).ready(function () {
+
+        $('#change-profile').on('submit', function () {
+
+            var form = document.getElementById('change-profile');
+            var formData = new FormData(form);
+
+            $.ajax({
+                type: 'POST',
+                url: '/cabinet/profile',
+                headers: {"X-CSRF-TOKEN": $("input[name='_csrf']").val()},
+                data: formData,
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+                    alert(msg);
+                },
+                error: function (e) {
+                    alert(e.responseText);
+                }
+            });
+
+            return false;
+        });
+
+        var resetInputs = function () {
+            $('#name').val('');
+            $('#surname').val('');
+            $('#phone').val('');
+            $('#username').val('');
+            $('#city').val('');
+        };
+
+        $('#reset').on('click',function () {
+            resetInputs();
+        });
+    });
+</script>

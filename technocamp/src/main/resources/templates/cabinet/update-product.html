@@ -1,0 +1,259 @@
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Cabinet</title>
+
+    <!--bootstrap 4.1.1-->
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <!--bootstrap 3.3.7-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <!--ajax-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <style>
+        .box-row .box-cell {
+            float: right;
+            margin-top: 30px;
+            margin-right: 20px;
+        }
+        .box-row .box-cell-del {
+            position: relative;
+            left: 30px;
+            bottom: 10px;
+            width: 50%;
+        }
+    </style>
+</head>
+<body>
+<div class="container bootstrap snippet">
+    <div class="row">
+        <div class="col-sm-10"><h4 th:if="${signedUser != null}"
+                                   th:text="${signedUser.name + ' ' + signedUser.surname}"></h4></div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3" th:replace="cabinet/header :: header">
+
+        </div>
+        <div class="col-sm-9">
+            <div th:replace="cabinet/sidebar :: sidebar">
+
+            </div>
+            <div class="tab-content">
+                <!--products-->
+                <form id="update-product" class="form" th:action="@{/cabinet/update-product/__${product.productId}__}"
+                      method="POST"
+                      enctype="multipart/form-data"
+                      onsubmit="return false;">
+
+                    <div class="form-group">
+
+                        <div class="col-xs-6">
+                            <label><h4>Name</h4></label>
+                            <input type="text"
+                                   id="name"
+                                   class="form-control"
+                                   name="name"
+                                   placeholder="product name"
+                                   th:value="${product.name}">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+
+                        <div class="col-xs-3">
+                            <label><h4>Price</h4></label>
+                            <input type="number"
+                                   id="price"
+                                   class="form-control"
+                                   name="price"
+                                   th:value="${product.price}">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+
+                        <div class="col-xs-3">
+                            <label><h4>Currency</h4></label>
+                            <select name="currency"
+                                    id="currency"
+                                    class="form-control"
+                                    style="height: 35px">
+                                <option th:selected="${product.currency == 'AZN'}" value="AZN">AZN</option>
+                                <option th:selected="${product.currency == 'TRY'}" value="TRY">TRY</option>
+                                <option th:selected="${product.currency == 'EUR'}" value="EUR">EUR</option>
+                                <option th:selected="${product.currency == 'USD'}" value="USD">USD</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+
+                        <div class="col-xs-3">
+                            <label><h4>Category</h4></label>
+                            <select class="form-control" style="height: 35px"
+                                    name="categoryId"
+                                    id="categoryId">
+                                <option th:each="category : ${categoryList}"
+                                        th:value="${category.id}"
+                                        th:text="${category.name}"
+                                        th:selected="${category.id == product.categoryId}">
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="col-xs-3">
+                            <label><h4>Subcategory</h4></label>
+                            <select class="form-control" style="height: 35px"
+                                    name="subcategoryId"
+                                    id="subcategoryId">
+
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <div class="form-group" style="float: right;margin-top: 30px">
+
+                        <div class="col-xs-6" style="width: 120%">
+                            <div class="text-center">
+                                <h6>Upload photos...</h6>
+                                <br>
+                                <h6><b style="color: red">Note:</b> You must not have images more than 3</h6>
+
+                                <input id="file" type="file" name="images" multiple max="3"
+                                       class="text-center center-block file-upload mt-4">
+                            </div>
+
+                            <div class="box-row" th:with="order=0" th:each="productImage : ${productImageList}">
+                                <div class="box-cell">
+                                    <div class="box-cell-del">
+                                        <button th:id="${productImage.id}" class="btn btn-xs btn-danger btn-delete">x</button>
+                                    </div>
+                                    <img th:id="${productImage.id}" th:src="@{/images/__${productImage.imageURL}__}" th:with="order=${order}+1"
+                                         class="avatar img-thumbnail" th:classappend="${order} ? 'img-'+${order} :''"
+                                         alt="avatar" style="width: 81px;height: 81px;margin-bottom: 20px;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+
+                        <div class="col-xs-6">
+                            <label><h4>Description</h4></label>
+                            <textarea id="description"
+                                      class="form-control"
+                                      cols="30"
+                                      rows="10"
+                                      name="description"
+                                      th:field="${product.description}"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+
+                        <div class="col-xs-12">
+                            <br>
+                            <!--X-CSRF-TOKEN-->
+                            <input type="hidden"
+                                   name="_csrf"
+                                   value="${_csrf.token}"/>
+                            <!--X-CSRF-TOKEN-->
+
+                            <button class="btn btn-lg btn-success" type="submit"><i
+                                    class="glyphicon glyphicon-ok-sign"></i> Save
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                <!--products-->
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+<script>
+    $(document).ready(function () {
+
+        //load all subcategories by categoryId
+        loadSubcategories();
+
+        $('#categoryId').on('change', function () {
+            var categoryId = $('#categoryId').val();
+            getSubcategoriesByCategoryId(categoryId,0);
+        });
+
+        function loadSubcategories() {
+            var categoryId = $('#categoryId').val();
+            var subcategoryId = [[${product.subcategoryId}]];
+            getSubcategoriesByCategoryId(categoryId,subcategoryId);
+        }
+
+        function getSubcategoriesByCategoryId(categoryId,subcategoryId) {
+            $.ajax({
+                type: 'GET',
+                url: '/cabinet/product/' + categoryId + '/' + subcategoryId,
+                success: function (msg) {
+                    $('#subcategoryId').html(msg);
+                },
+                error: function (e) {
+                    alert(e.responseText);
+                }
+            });
+
+            return false;
+        }
+
+        $('.btn-delete').on('click', function () {
+            var attr = $(this).attr('id');
+            var parent = $(this).parent();
+            parent = parent.parent();
+
+            $.ajax({
+                type: 'GET',
+                url: '/cabinet/delete-product-image/'+attr,
+                success: function (msg) {
+                    $(parent).parent().hide();
+                    alert(msg);
+                },
+                error: function (e) {
+                    alert(e.responseText);
+                }
+            });
+
+            return false;
+        });
+
+        $('#update-product').on('submit',function () {
+           var form = document.getElementById('update-product');
+           var formData = new FormData(form);
+
+           var productId = [[${product.productId}]];
+
+           $.ajax({
+               type: 'POST',
+               url: '/cabinet/update-product/'+productId,
+               data: formData,
+               contentType: false,
+               cache: false,
+               processData: false,
+               success: function (msg) {
+                   alert(msg);
+               },
+               error: function (e) {
+                   alert(e.responseText);
+               }
+           });
+
+           return false;
+        });
+    });
+</script>

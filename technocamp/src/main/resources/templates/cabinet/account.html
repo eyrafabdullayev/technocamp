@@ -1,0 +1,155 @@
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Cabinet</title>
+
+    <!--bootstrap 4.1.1-->
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <!--bootstrap 3.3.7-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <!--ajax-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+<div class="container bootstrap snippet">
+    <div class="row">
+        <div class="col-sm-10"><h4 th:if="${signedUser != null}"
+                                   th:text="${signedUser.name + ' ' + signedUser.surname}"></h4></div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3" th:replace="cabinet/header :: header">
+
+        </div>
+        <div class="col-sm-9">
+            <div th:replace="cabinet/sidebar :: sidebar">
+
+            </div>
+            <div class="tab-content">
+                <!--account-->
+                <div>
+                    <form th:action="@{/cabinet/account}" id="user-account" method="POST" onsubmit="return false;">
+                        <div class="form-group">
+
+                            <div class="col-xs-8" style="width: 55%">
+                                <label><h4>Username or Email</h4></label>
+                                <input type="text"
+                                       id="username"
+                                       class="form-control"
+                                       name="username"
+                                       placeholder="Username"
+                                       disabled
+                                       th:value="${signedUser.username}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+
+                            <div class="col-xs-8" style="width: 55%">
+                                <label><h4>Current Password</h4></label>
+                                <input type="password"
+                                       id="currentPassword"
+                                       class="form-control"
+                                       name="currentPassword"
+                                       placeholder="*****">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+
+                            <div class="col-xs-8" style="width: 55%">
+                                <label><h4>New Password</h4></label>
+                                <input type="password"
+                                       id="newPassword"
+                                       class="form-control"
+                                       name="newPassword"
+                                       placeholder="*****">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+
+                            <div class="col-xs-8" style="width: 55%">
+                                <label><h4>New Password Again</h4></label>
+                                <input type="password"
+                                       id="newPasswordAgain"
+                                       class="form-control"
+                                       name="newPasswordAgain"
+                                       placeholder="*****">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+
+                            <div class="col-xs-12">
+                                <br>
+                                <!--X-CSRF-TOKEN-->
+                                <input type="hidden"
+                                       name="_csrf"
+                                       value="${_csrf.token}"/>
+                                <!--X-CSRF-TOKEN-->
+
+                                <input type="hidden" id="id" name="id" th:value="${signedUser.id}">
+
+                                <button class="btn btn-lg btn-success" type="submit"><i
+                                        class="glyphicon glyphicon-ok-sign"></i> Save
+                                </button>
+                                <button id="reset" class="btn btn-lg" type="button"><i
+                                        class="glyphicon glyphicon-repeat"></i> Reset
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <!--account-->
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+<script>
+    $(document).ready(function () {
+        $('#user-account').on('submit',function () {
+
+            var form = document.getElementById('user-account');
+            var formData = new FormData(form);
+
+            $.ajax({
+                type: 'POST',
+                url: '/cabinet/account',
+                headers: {"X-CSRF-TOKEN": $("input[name='_csrf']").val()},
+                data: formData,
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+                    alert(msg);
+                    resetInputs();
+                },
+                error: function (e) {
+                    alert(e.responseText);
+                }
+            });
+
+            return false;
+        });
+
+        $('#reset').on('click',function () {
+           resetInputs();
+        });
+    });
+
+
+    var resetInputs = function () {
+        $('#currentPassword').val('');
+        $('#newPassword').val('');
+        $('#newPasswordAgain').val('');
+    }
+</script>

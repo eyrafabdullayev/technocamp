@@ -1,0 +1,43 @@
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div th:fragment="header">
+    <div class="text-center">
+        <img th:src="@{/images/__${signedUser.picture}__}" class="avatar img-thumbnail"
+                                                                   alt="avatar" style="width: 192px;height: 192px;">
+    </div>
+    <br>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">Website <i class="fa fa-link fa-1x"></i></div>
+        <div class="panel-body"><a href="http://bootnipets.com">bootnipets.com</a></div>
+    </div>
+
+
+    <ul class="list-group">
+        <li class="list-group-item text-muted">Activity <i class="fa fa-dashboard fa-1x"></i></li>
+        <li class="list-group-item text-right"><span class="pull-left"><strong>Shares</strong></span> 125
+        </li>
+        <li class="list-group-item text-right"><span class="pull-left"><strong>Likes</strong></span> 13</li>
+        <li class="list-group-item text-right"><span class="pull-left"><strong>Posts</strong></span> 37</li>
+        <li class="list-group-item text-right"><span class="pull-left"><strong>Followers</strong></span> 78
+        </li>
+    </ul>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">Social Media</div>
+        <div class="panel-body">
+            <i class="fa fa-facebook fa-2x"></i> <i class="fa fa-github fa-2x"></i> <i
+                class="fa fa-twitter fa-2x"></i> <i class="fa fa-pinterest fa-2x"></i> <i
+                class="fa fa-google-plus fa-2x"></i>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

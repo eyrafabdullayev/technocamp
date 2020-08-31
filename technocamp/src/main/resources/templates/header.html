@@ -1,0 +1,107 @@
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div th:fragment="header">
+    <!-- HEADER -->
+    <header>
+        <!-- TOP HEADER -->
+        <div id="top-header">
+            <div class="container">
+                <ul class="header-links pull-left">
+                    <li><a href="#" th:inline="text"><i class="fa fa-phone"></i>
+                    [[${details.phone}]]</a></li>
+                    <li><a href="#"><i class="fa fa-envelope-o"></i>
+                    [[${details.email}]]</a></li>
+                    <li><a href="#"><i class="fa fa-map-marker"></i>
+                    [[${details.address}]]</a></li>
+                </ul>
+                <ul class="header-links pull-right" th:if="${signedUser != null}">
+                    <li><a th:href="@{/logout}">Logout</a></li>
+                    <li><a th:href="@{/cabinet/account}"><i class="fa fa-user-o"></i> My Account</a></li>
+                </ul>
+            </div>
+        </div>
+        <!-- /TOP HEADER -->
+
+        <!-- MAIN HEADER -->
+        <div id="header">
+            <!-- container -->
+            <div class="container">
+                <!-- row -->
+                <div class="row">
+                    <!-- LOGO -->
+                    <div class="col-md-3">
+                        <div class="header-logo">
+                            <a th:href="@{/}" class="logo">
+                                <img th:src="@{/img/logo.png}" alt="logo">
+                            </a>
+                        </div>
+                    </div>
+                    <!-- /LOGO -->
+
+                    <!-- SEARCH BAR -->
+                    <div class="col-md-6">
+                        <div class="header-search">
+                            <form id="search-form" method="GET" onsubmit="return false;">
+                                <select id="categoryId" class="input-select">
+                                    <option th:each="category : ${categoryList}"
+                                            th:text="${category.name}"
+                                            th:value="${category.id}"></option>
+                                </select>
+                                <input id="productName" class="input" placeholder="Search here">
+                                <button class="search-btn">Search</button>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- /SEARCH BAR -->
+
+                    <!-- ACCOUNT -->
+                    <div class="col-md-3 clearfix">
+                        <div class="header-ctn">
+                            <!-- Wishlist -->
+                            <div>
+                                <a th:href="@{/wishlist}">
+                                    <i class="fa fa-heart-o"></i>
+                                    <span>Your Wishlist</span>
+                                    <div class="qty">0</div>
+                                </a>
+                            </div>
+                            <!-- /Wishlist -->
+                        </div>
+                    </div>
+                    <!-- /ACCOUNT -->
+                </div>
+                <!-- row -->
+            </div>
+            <!-- container -->
+        </div>
+        <!-- /MAIN HEADER -->
+    </header>
+    <!-- /HEADER -->
+
+    <!-- NAVIGATION -->
+    <nav id="navigation">
+        <!-- container -->
+        <div class="container">
+            <!-- responsive-nav -->
+            <div id="responsive-nav">
+                <!-- NAV -->
+                <ul class="main-nav nav navbar-nav">
+                    <li class="active"><a th:href="@{/index}">Home</a></li>
+                    <li th:each="category : ${categoryList}"><a th:href="@{/category/__${#strings.toLowerCase(category.name)}__/__${category.id}__}" th:text="${category.name}"></a></li>
+                </ul>
+                <!-- /NAV -->
+            </div>
+            <!-- /responsive-nav -->
+        </div>
+        <!-- /container -->
+    </nav>
+    <!-- /NAVIGATION -->
+</div>
+</body>
+</html>

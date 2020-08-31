@@ -1,0 +1,326 @@
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Cabinet</title>
+
+    <!--bootstrap 4.1.1-->
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <!--bootstrap 3.3.7-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <!--ajax-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+<div class="container bootstrap snippet">
+    <div class="row">
+        <div class="col-sm-10"><h4 th:if="${signedUser != null}"
+                                   th:text="${signedUser.name + ' ' + signedUser.surname}"></h4></div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3" th:replace="cabinet/header :: header">
+
+        </div>
+        <div class="col-sm-9">
+            <div th:replace="cabinet/sidebar :: sidebar">
+
+            </div>
+            <div class="tab-content">
+                <!--profile-->
+                <div>
+                    <br>
+                    <div th:switch="${status}">
+                        <div class="message hide" role="alert">
+                        </div>
+
+                        <div th:case="1" class="alert alert-warning" role="alert">
+                            Your request will be accepted about few hours by moderator.
+                        </div>
+                        <div th:case="2" id="updating">
+                            <form id="update-store" class="form" th:action="@{/cabinet/store/__${storeByUserId.id}__}"
+                                  method="POST"
+                                  enctype="multipart/form-data"
+                                  onsubmit="return false;">
+
+                                <div class="form-group">
+
+                                    <div class="col-xs-6">
+                                        <label><h4>Store name</h4></label>
+                                        <input type="text"
+                                               class="form-control"
+                                               name="name"
+                                               th:value="${storeByUserId.name}"
+                                               placeholder="store name">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+
+                                    <div class="col-xs-6">
+                                        <label><h4>Store phone</h4></label>
+                                        <input type="text"
+                                               class="form-control"
+                                               name="phone"
+                                               th:value="${storeByUserId.phone}"
+                                               placeholder="store phone">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+
+                                    <div class="col-xs-6">
+                                        <label><h4>Store location</h4></label>
+                                        <input type="text"
+                                               class="form-control"
+                                               name="location"
+                                               th:value="${storeByUserId.location}"
+                                               placeholder="store location">
+                                    </div>
+                                </div>
+
+                                <div class="form-group" style="float: right;margin-top: 5px">
+
+                                    <div class="col-xs-6">
+                                        <div class="text-center">
+                                            <h6>Upload a different photo...</h6>
+
+                                            <img th:src="@{/images/__${storeByUserId.imageURL}__}"
+                                                 class="storeImage avatar img-thumbnail"
+                                                 alt="avatar" style="width: 81px;height: 81px;">
+
+                                            <input id="diffFile" type="file" name="image"
+                                                   class="text-center center-block file-upload mt-4">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+
+                                    <div class="col-xs-6">
+                                        <label><h4>Store description</h4></label>
+                                        <textarea class="form-control"
+                                                  cols="30"
+                                                  rows="10"
+                                                  name="description"
+                                                  th:field="${storeByUserId.description}"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+
+                                    <div class="col-xs-12">
+                                        <br>
+                                        <!--X-CSRF-TOKEN-->
+                                        <input type="hidden"
+                                               name="_csrf"
+                                               value="${_csrf.token}"/>
+                                        <!--X-CSRF-TOKEN-->
+
+                                        <input type="hidden" name="userId" th:value="${signedUser.id}">
+
+                                        <input type="hidden" name="storeId" th:value="${storeByUserId.id}">
+
+                                        <button class="btn btn-lg btn-success" type="submit"><i
+                                                class="glyphicon glyphicon-ok-sign"></i> Save
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div th:case="*" id="store-panel">
+                            <form id="add-store" class="form" th:action="@{/cabinet/store}" method="POST"
+                                  enctype="multipart/form-data"
+                                  onsubmit="return false;">
+
+                                <div class="form-group">
+
+                                    <div class="col-xs-6">
+                                        <label><h4>Store name</h4></label>
+                                        <input type="text"
+                                               id="name"
+                                               class="form-control"
+                                               name="name"
+                                               placeholder="store name">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+
+                                    <div class="col-xs-6">
+                                        <label><h4>Store phone</h4></label>
+                                        <input type="text"
+                                               id="phone"
+                                               class="form-control"
+                                               name="phone"
+                                               placeholder="store phone">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+
+                                    <div class="col-xs-6">
+                                        <label><h4>Store location</h4></label>
+                                        <input type="text"
+                                               id="location"
+                                               class="form-control"
+                                               name="location"
+                                               placeholder="store location">
+                                    </div>
+                                </div>
+
+                                <div class="form-group" style="float: right;margin-top: 5px">
+
+                                    <div class="col-xs-6">
+                                        <div class="text-center">
+                                            <h6>Upload a photo...</h6>
+
+                                            <input id="file" type="file" name="image"
+                                                   class="text-center center-block file-upload mt-4">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+
+                                    <div class="col-xs-6">
+                                        <label><h4>Store description</h4></label>
+                                        <textarea id="description"
+                                                  class="form-control"
+                                                  cols="30"
+                                                  rows="10"
+                                                  name="description"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+
+                                    <div class="col-xs-12">
+                                        <br>
+                                        <!--X-CSRF-TOKEN-->
+                                        <input type="hidden"
+                                               name="_csrf"
+                                               value="${_csrf.token}"/>
+                                        <!--X-CSRF-TOKEN-->
+
+                                        <input type="hidden" id="userId" name="userId" th:value="${signedUser.id}">
+
+                                        <input type="hidden" id="storeId" name="storeId" th:if="${storeByUserId != null}" th:value="${storeByUserId.id}">
+
+                                        <button class="btn btn-lg btn-success" type="submit"><i
+                                                class="glyphicon glyphicon-ok-sign"></i> Save
+                                        </button>
+                                        <button id="reset" class="btn btn-lg" type="button"><i
+                                                class="glyphicon glyphicon-repeat"></i> Reset
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!--profile-->
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+<script>
+    $(document).ready(function () {
+        $('#add-store').on('submit', function () {
+
+            var form = document.getElementById('add-store');
+            var formData = new FormData(form);
+
+            $.ajax({
+                type: 'POST',
+                url: '/cabinet/store',
+                data: formData,
+                headers: {"X-CSRF-TOKEN": $("input[name='_csrf']").val()},
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+                    var element = $("div[role='alert']");
+                    element.removeClass("hide").addClass("alert alert-warning").html(msg).show();
+
+                    //hide form
+                    $('#store-panel').hide();
+                    //reset inputs of form
+                    resetInputs();
+                },
+                error: function (e) {
+                    alert(e.responseText);
+                }
+            });
+
+            return false;
+        });
+
+        $('#update-store').on('submit', function () {
+
+            var form = document.getElementById('update-store');
+            var formData = new FormData(form);
+
+            var storeId = $("input[name='storeId']").val();
+
+            $.ajax({
+                type: 'POST',
+                url: '/cabinet/store/' + storeId,
+                data: formData,
+                headers: {"X-CSRF-TOKEN": $("input[name='_csrf']").val()},
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+                    var element = $(".message");
+                    if (msg == 'success') {
+                        $('#updating').hide();
+                        element.removeClass("hide").addClass("alert alert-warning").html('Operation was successfully! Your request will be accepted about few hours by moderator.').show();
+                    } else {
+                        element.removeClass("hide").addClass("alert alert-danger").html(msg).show();
+                    }
+                },
+                error: function (e) {
+                    alert(e.responseText);
+                }
+            });
+
+            return false;
+        });
+
+        $('#reset').on('click', function () {
+            resetInputs();
+        });
+
+        var resetInputs = function () {
+            $('#name').val('');
+            $('#phone').val('');
+            $('#location').val('');
+            $('#description').val('');
+            $('#file').val('');
+        }
+
+        $('#diffFile').on('change', function () {
+            readUrl(this);
+        });
+
+        var readUrl = function (input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (ev) {
+                    $('.storeImage').attr('src', ev.target.result);
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    });
+</script>
