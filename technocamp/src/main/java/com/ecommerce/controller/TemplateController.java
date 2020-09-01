@@ -182,6 +182,6 @@ public class TemplateController {
     public String logout(HttpSession session) {
         SignedUser.signedUser = null;
         session.invalidate();
-        return "index";
+        return "login";
     }
 }

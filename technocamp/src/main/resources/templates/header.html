@@ -11,7 +11,7 @@
     <header>
         <!-- TOP HEADER -->
         <div id="top-header">
-            <div class="container">
+            <div class="container" th:switch="${signedUser}">
                 <ul class="header-links pull-left">
                     <li><a href="#" th:inline="text"><i class="fa fa-phone"></i>
                     [[${details.phone}]]</a></li>
@@ -20,7 +20,10 @@
                     <li><a href="#"><i class="fa fa-map-marker"></i>
                     [[${details.address}]]</a></li>
                 </ul>
-                <ul class="header-links pull-right" th:if="${signedUser != null}">
+                <ul class="header-links pull-right" th:case="null">
+                    <li><a th:href="@{/login}"><i class="fa fa-user-o"></i> Login</a></li>
+                </ul>
+                <ul class="header-links pull-right" th:case="*">
                     <li><a th:href="@{/logout}">Logout</a></li>
                     <li><a th:href="@{/cabinet/account}"><i class="fa fa-user-o"></i> My Account</a></li>
                 </ul>
@@ -53,7 +56,7 @@
                                             th:text="${category.name}"
                                             th:value="${category.id}"></option>
                                 </select>
-                                <input id="productName" class="input" placeholder="Search here">
+                                <input id="productName" class="input" required placeholder="Search here">
                                 <button class="search-btn">Search</button>
                             </form>
                         </div>
@@ -92,8 +95,13 @@
             <div id="responsive-nav">
                 <!-- NAV -->
                 <ul class="main-nav nav navbar-nav">
-                    <li class="active"><a th:href="@{/index}">Home</a></li>
-                    <li th:each="category : ${categoryList}"><a th:href="@{/category/__${#strings.toLowerCase(category.name)}__/__${category.id}__}" th:text="${category.name}"></a></li>
+                    <li th:class="${#httpServletRequest.requestURI == '/index'} ? active : ''"><a th:href="@{/index}">Home</a></li>
+                    <li th:each="category : ${categoryList}"
+                        th:class="${#httpServletRequest.requestURI == '/category/__${#strings.toLowerCase(category.name)}__/__${category.id}__'} ? active  : ''">
+                        <a th:href="@{/category/__${#strings.toLowerCase(category.name)}__/__${category.id}__}"
+                           th:text="${category.name}">
+                        </a>
+                    </li>
                 </ul>
                 <!-- /NAV -->
             </div>

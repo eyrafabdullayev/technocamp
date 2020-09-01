@@ -43,12 +43,11 @@
             <div class="col-md-12">
                 <ul class="breadcrumb-tree">
                     <li><a th:href="@{/index}">Home</a></li>
-                    <li><a th:href="@{/allcategories}">All Categories</a></li>
-                    <li><a th:href="@{/category/${#strings.toLowerCase(categoryName)}/${product.categoryId}}"
+                    <li><a th:href="@{/category/allcategories/0}">All Categories</a></li>
+                    <li><a th:href="@{/category/__${#strings.toLowerCase(categoryName)}__/__${product.categoryId}__}"
                            th:text="${categoryName}"></a>
                     </li>
-                    <li><a th:href="@{/subcategory/${#strings.toLowerCase(subCategoryName)}/${product.subcategoryId}}"
-                           th:text="${subCategoryName}"></a>
+                    <li th:text="${subCategoryName}">
                     </li>
                     <li th:text="${product.name}"
                         class="active">
@@ -163,8 +162,7 @@
 
                     <ul class="product-links">
                         <li>Category:</li>
-                        <li>
-                            <a href="#" th:text="${subCategoryName}"></a>
+                        <li th:text="${subCategoryName}">
                         </li>
                         <li><a th:href="@{/category/__${#strings.toLowerCase(categoryName)}__/__${product.categoryId}__}"
                                th:text="${categoryName}"></a>

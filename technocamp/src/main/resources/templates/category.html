@@ -47,7 +47,7 @@
             </div>
 
             <div th:switch="${#lists.size(productList)}">
-                <div th:case="0">We cannot find ant products</div>
+                <div th:case="0">We cannot find any products</div>
                 <!-- product -->
                 <div th:case="*" th:each="product : ${productList}" class="col-md-3 col-xs-6">
                     <div class="product">

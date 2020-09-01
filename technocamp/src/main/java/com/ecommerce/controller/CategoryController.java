@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +41,7 @@ public class CategoryController {
                                Model model) {
 
         //check path variables
-        if(!isNumeric(categoryId)){
+        if (!isNumeric(categoryId)) {
             return "404";
         }
 
@@ -50,7 +51,7 @@ public class CategoryController {
             model.addAttribute("signedUser", signedUser);
         }
 
-        if(categoryName != null) {
+        if (categoryName != null) {
             model.addAttribute("categoryName", categoryName);
         }
 
@@ -58,16 +59,21 @@ public class CategoryController {
         model.addAttribute("details", detailsRepository.getDetails());
 
         //product list
-        List<Product> productList = productService.getAllProducts().stream()
-                .filter(product -> product.getCategoryId() == categoryId)
-                .collect(Collectors.toList());
+        List<Product> productList;
+        if (categoryName.equals("allcategories")) {
+            productList = productService.getAllProducts();
+        } else {
+            productList = productService.getAllProducts().stream()
+                    .filter(product -> product.getCategoryId() == categoryId)
+                    .collect(Collectors.toList());
+        }
 
         model.addAttribute("productList", productList);
 
-        if (productList.size() > 0) {
-            //get category list
-            model.addAttribute("categoryList", categoryService.getCategoryList());
+        //get category list
+        model.addAttribute("categoryList", categoryService.getCategoryList());
 
+        if (productList.size() > 0) {
             //get subcategory list
             model.addAttribute("subcategoryList", subcategoryService.getSubcategoryList());
         }
@@ -86,7 +92,7 @@ public class CategoryController {
         return "category";
     }
 
-    public boolean isNumeric(Integer id){
+    public boolean isNumeric(Integer id) {
         return id != null && String.valueOf(id).matches("[-+]?\\d*\\.?\\d+");
     }
 }
